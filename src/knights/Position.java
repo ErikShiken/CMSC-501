@@ -33,8 +33,9 @@ public class Position implements Comparator<Position> {
 		return returnVal;
 	}
 
-	public boolean equals(Position p) {
-		if (p.getX() == this.x && p.getY() == y)
+	@Override
+	public boolean equals(Object p) {
+		if (((Position) p).getX() == this.x && ((Position) p).getY() == this.y)
 			return true;
 		return false;
 	}
