@@ -16,24 +16,24 @@ public class Knight {
 		this.threatens = new ArrayList<Position>();
 		// 'top left' positions
 		this.threatens.add(new Position(myPosition.getX() - 2, myPosition
-				.getY() + 1));
+				.getY() - 1));
 		this.threatens.add(new Position(myPosition.getX() - 1, myPosition
-				.getY() + 2));
+				.getY() - 2));
 		// 'top right' positions
 		this.threatens.add(new Position(myPosition.getX() + 2, myPosition
+				.getY() - 1));
+		this.threatens.add(new Position(myPosition.getX() + 1, myPosition
+				.getY() - 2));
+		// 'bottom left' positions
+		this.threatens.add(new Position(myPosition.getX() - 2, myPosition
+				.getY() + 1));
+		this.threatens.add(new Position(myPosition.getX() - 1, myPosition
+				.getY() + 2));
+		// 'bottom right' positions
+		this.threatens.add(new Position(myPosition.getX() + 2, myPosition
 				.getY() + 1));
 		this.threatens.add(new Position(myPosition.getX() + 1, myPosition
 				.getY() + 2));
-		// 'bottom left' positions
-		this.threatens.add(new Position(myPosition.getX() - 2, myPosition
-				.getY() - 1));
-		this.threatens.add(new Position(myPosition.getX() - 1, myPosition
-				.getY() - 2));
-		// 'bottom right' positions
-		this.threatens.add(new Position(myPosition.getX() + 2, myPosition
-				.getY() - 1));
-		this.threatens.add(new Position(myPosition.getX() + 1, myPosition
-				.getY() - 2));
 	}
 
 	@SuppressWarnings("unchecked")
