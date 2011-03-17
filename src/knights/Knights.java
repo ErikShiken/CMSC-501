@@ -17,6 +17,8 @@ public class Knights {
 	public static void main(String[] args) throws IOException {
 		initFlags(args);
 		initBoard();
+
+		myBoard.findMaxMatching();
 	}
 
 	private static void getInvalids(List<Position> invalids, BufferedReader br,
