@@ -23,10 +23,10 @@ public class Position implements Comparator<Position> {
 	public int compare(Position o1, Position o2) {
 		int returnVal = -1;
 
-		if (this.x == o1.getX() && this.y == o2.getY()) {
+		if (o1.getX() == o2.getX() && o1.getY() == o2.getY()) {
 			returnVal = 0;
-		} else if ((this.x != o1.getX() && this.y == o2.getY())
-				|| (this.x == o1.getX() && this.y != o2.getY())) {
+		} else if ((o2.getX() != o1.getX() && o2.getY() == o1.getY())
+				|| (o2.getX() == o1.getX() && o2.getY() != o1.getY())) {
 			returnVal = 1;
 		}
 
@@ -37,5 +37,9 @@ public class Position implements Comparator<Position> {
 		if (p.getX() == this.x && p.getY() == y)
 			return true;
 		return false;
+	}
+
+	public String toString() {
+		return "(" + this.x + ", " + this.y + ")";
 	}
 }
