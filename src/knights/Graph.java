@@ -5,101 +5,103 @@ import java.util.List;
 
 public class Graph {
 	private final String LINE_SEPARATOR = System.getProperty("line.separator");
-	ArrayList<Position> source_edges;
-	ArrayList<Position> sink_edges;
-	ArrayList<Position> L;
-	ArrayList<Edge> L_edges;
-	ArrayList<Position> R;
-	ArrayList<Edge> R_edges;
+	private final boolean TEST;
+	private final String TEST_PREFIX = "TEST: Graph.";
 
-	public Graph(List<Position> L, List<Position> R) {
+	List<Edge> edges;
+	List<Position> L;
+	List<Position> R;
+	List<Position> IS;
+
+	public Graph(List<Position> L, List<Position> R, boolean testing) {
+		this.IS = new ArrayList<Position>();
 		this.L = new ArrayList<Position>();
 		this.R = new ArrayList<Position>();
 		this.L.addAll(L);
 		this.R.addAll(R);
-
-		this.source_edges = new ArrayList<Position>();
-		this.source_edges.addAll(this.L);
-
-		this.sink_edges = new ArrayList<Position>();
-		this.sink_edges.addAll(this.R);
-
-		initL_edges();
-		initR_edges();
+		this.TEST = testing;
+		initLR_edges();
 	}
 
-	private void initL_edges() {
-		this.L_edges = new ArrayList<Edge>();
-		for (int i = 0; i < this.L.size(); i++) {
+	private void initLR_edges() {
+		// also finds orphans in L
+		this.edges = new ArrayList<Edge>();
+		int L_size = this.L.size();
+
+		List<Boolean> r_orphans = new ArrayList<Boolean>(this.R.size());
+		for (int i = 0; i < r_orphans.size(); i++) {
+			r_orphans.set(i, true);
+		}
+
+		for (int i = 0; i < L_size; i++) {
 			Knight temp = new Knight(this.L.get(i));
 			ArrayList<Position> R_connection = temp.getThreats();
 
-			boolean added = false;
+			boolean orphan = true;
 			for (Position p : R_connection) {
 				if (this.R.contains(p)) {
-					this.L_edges.add(new Edge(i, this.R.indexOf(p)));
-					added = true;
+					this.edges.add(new Edge(i, this.R.indexOf(p), 0));
+					orphan = false;
+
+					int r_index = this.R.indexOf(p);
+					r_orphans.set(r_index, false);
 				}
 			}
 
-			if (!added) {
-				// this L needs to be connected to the sink
-				this.sink_edges.add(this.L.get(i));
+			if (orphan) {
+				this.IS.add(this.L.get(i));
+				this.L.remove(i);
+				L_size--;
 			}
 		}
+
+		for (int i = 0; i < r_orphans.size(); i++) {
+			if (r_orphans.get(i)) {
+				this.IS.add(this.R.get(i));
+				this.R.remove(i);
+				r_orphans.remove(i);
+			}
+		}
+
 	}
 
-	private void initR_edges() {
-		this.R_edges = new ArrayList<Edge>();
-		for (int i = 0; i < this.R.size(); i++) {
-			Knight temp = new Knight(this.R.get(i));
-			ArrayList<Position> L_connection = temp.getThreats();
+	public List<Position> findIS() {
+		boolean take_nodes_from_L = (this.L.size() >= this.R.size());
 
-			boolean added = false;
-			for (Position p : L_connection) {
-				if (this.L.contains(p)) {
-					this.R_edges.add(new Edge(i, this.L.indexOf(p)));
-					added = true;
+		while (this.edges.size() > 0) {
+			Edge e = this.edges.get(0);
+			int u = e.getStart();
+			int v = e.getEnd();
+
+			if (take_nodes_from_L) {
+				this.IS.add(this.L.get(u));
+				if (this.TEST) {
+					System.out.println("TEST: added node " + this.L.get(u)
+							+ " to IS");
+				}
+			} else {
+				this.IS.add(this.R.get(v));
+				if (this.TEST) {
+					System.out.println("TEST: added node " + this.R.get(v)
+							+ " to IS");
 				}
 			}
 
-			if (!added) {
-				// this R needs to be connected to the source
-				this.source_edges.add(this.R.get(i));
+			this.edges.remove(0);
+			if (this.TEST) {
+				System.out.println("TEST: removed edge " + e);
 			}
 		}
+
+		return this.IS;
 	}
 
 	public String dispConnections() {
 		String returnStr = this.LINE_SEPARATOR;
-		returnStr += "From source to L: ";
 		returnStr += this.LINE_SEPARATOR;
 
-		for (Position p : this.source_edges) {
-			returnStr += "s -> " + p;
-			returnStr += this.LINE_SEPARATOR;
-		}
-
-		returnStr += "From L to R: ";
-		returnStr += this.LINE_SEPARATOR;
-		for (Edge e : this.L_edges) {
-			returnStr += "L" + this.L.get(e.getStart()) + " -> ";
-			returnStr += "R" + this.R.get(e.getEnd());
-			returnStr += this.LINE_SEPARATOR;
-		}
-
-		returnStr += "From R to L: ";
-		returnStr += this.LINE_SEPARATOR;
-		for (Edge e : this.R_edges) {
-			returnStr += "R" + this.R.get(e.getStart()) + " -> ";
-			returnStr += "L" + this.L.get(e.getEnd());
-			returnStr += this.LINE_SEPARATOR;
-		}
-
-		returnStr += "From R to t: ";
-		returnStr += this.LINE_SEPARATOR;
-		for (Position p : this.sink_edges) {
-			returnStr += p + " -> t";
+		for (Edge e : this.edges) {
+			returnStr += e.getStart() + " -> " + e.getEnd();
 			returnStr += this.LINE_SEPARATOR;
 		}
 

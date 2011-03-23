@@ -18,7 +18,6 @@ public class Knights {
 		initFlags(args);
 		initBoard();
 
-		myBoard.findMaxMatching();
 	}
 
 	private static void getInvalids(List<Position> invalids, BufferedReader br,
@@ -49,14 +48,12 @@ public class Knights {
 		strLine = br.readLine();
 		int numInv = Integer.parseInt(strLine);
 
-		List<Position> invalids = new ArrayList<Position>();
-		getInvalids(invalids, br, numInv);
-
-		myBoard = new Board(invalids, final_pos, TEST);
-
-		if (TEST) {
-			System.out.println("TEST: Knights.initBoard: available fields --> "
-					+ myBoard.dispAvailableFields());
+		if (numInv > 0) {
+			List<Position> invalids = new ArrayList<Position>();
+			getInvalids(invalids, br, numInv);
+			myBoard = new Board(invalids, final_pos, TEST);
+		} else {
+			myBoard = new Board(null, final_pos, TEST);
 		}
 	}
 

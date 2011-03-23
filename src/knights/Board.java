@@ -20,10 +20,25 @@ public class Board {
 		this.invalid_fields = (ArrayList<Position>) invalid_fields;
 
 		initAvailableFields();
+		initGraph();
+		List<Position> IS = this.bipartite_graph.findIS();
+
+		if (this.TEST) {
+			for (int i = 0; i < IS.size(); i++) {
+				System.out.println("IS -> " + IS.get(i));
+			}
+		}
 	}
 
 	public void findMaxMatching() {
 		initGraph();
+		if (this.TEST) {
+			System.out.println("TEST: Board.findMaxMatching: Completed");
+			System.out
+					.println("TEST: Board.findMaxMatching: Start relabel_to_front");
+		}
+
+		// int maxflow = this.bipartite_graph.relabel_to_front();
 	}
 
 	private void initAvailableFields() {
@@ -41,7 +56,8 @@ public class Board {
 		for (int i = 1; i <= this.size.getX(); i++) {
 			for (int j = 1; j <= this.size.getY(); j++) {
 				Position temp = new Position(i, j);
-				if (this.invalid_fields.contains(temp)) {
+				if (this.invalid_fields != null
+						&& this.invalid_fields.contains(temp)) {
 					invalid = true;
 				}
 
@@ -65,10 +81,15 @@ public class Board {
 	private void initGraph() {
 		if (this.black_fields.size() > this.white_fields.size()) {
 			this.bipartite_graph = new Graph(this.black_fields,
-					this.white_fields);
+					this.white_fields, this.TEST);
 		} else {
 			this.bipartite_graph = new Graph(this.white_fields,
-					this.black_fields);
+					this.black_fields, this.TEST);
+		}
+
+		if (this.TEST) {
+			System.out.println("TEST: Board.initGraph: dispConnections: "
+					+ this.bipartite_graph.dispConnections());
 		}
 	}
 
@@ -88,6 +109,7 @@ public class Board {
 			returnStr += p.toString();
 			returnStr += this.LINE_SEPARATOR;
 		}
+
 		return returnStr;
 	}
 }
