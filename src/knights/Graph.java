@@ -20,26 +20,44 @@ public class Graph {
 		this.L.addAll(L);
 		this.R.addAll(R);
 		this.TEST = testing;
+		if (this.TEST) {
+			for (int i = 0; i < this.R.size(); i++) {
+				System.out.println("TEST: R(" + i + ") -> " + this.R.get(i));
+			}
+		}
 		initLR_edges();
 	}
 
 	private void initLR_edges() {
 		// also finds orphans in L
 		this.edges = new ArrayList<Edge>();
-		int L_size = this.L.size();
+		List<Boolean> r_orphans = new ArrayList<Boolean>();
 
-		List<Boolean> r_orphans = new ArrayList<Boolean>(this.R.size());
-		for (int i = 0; i < r_orphans.size(); i++) {
-			r_orphans.set(i, true);
+		for (int i = 0; i < this.R.size(); i++) {
+			r_orphans.add(true);
 		}
 
-		for (int i = 0; i < L_size; i++) {
+		int i = 0;
+		while (this.L.size() > 0 && i < this.L.size()) {
 			Knight temp = new Knight(this.L.get(i));
 			ArrayList<Position> R_connection = temp.getThreats();
+			if (this.TEST) {
+				for (int j = 0; j < R_connection.size(); j++) {
+					System.out.println("TEST: R_connection(" + j + ") -> "
+							+ R_connection.get(j));
+				}
+			}
 
 			boolean orphan = true;
 			for (Position p : R_connection) {
+				if (this.TEST) {
+					System.out.println("Position -> " + p);
+				}
 				if (this.R.contains(p)) {
+					if (this.TEST) {
+						System.out.println("TEST: Adding edge -> "
+								+ new Edge(i, this.R.indexOf(p), 0));
+					}
 					this.edges.add(new Edge(i, this.R.indexOf(p), 0));
 					orphan = false;
 
@@ -51,18 +69,30 @@ public class Graph {
 			if (orphan) {
 				this.IS.add(this.L.get(i));
 				this.L.remove(i);
-				L_size--;
+			} else {
+				i++;
 			}
 		}
 
-		for (int i = 0; i < r_orphans.size(); i++) {
+		i = 0;
+		while (r_orphans.size() > 0 && i < r_orphans.size()) {
+			if (this.TEST) {
+				System.out.println("TEST: entered while loop for r_orphans.");
+			}
 			if (r_orphans.get(i)) {
 				this.IS.add(this.R.get(i));
 				this.R.remove(i);
 				r_orphans.remove(i);
+				if (this.TEST) {
+					System.out.println("TEST: removing for r_orphans.");
+				}
+			} else {
+				i++;
+				if (this.TEST) {
+					System.out.println("TEST: incremented for r_orphans.");
+				}
 			}
 		}
-
 	}
 
 	public List<Position> findIS() {
@@ -87,12 +117,37 @@ public class Graph {
 				}
 			}
 
+			int i = 1;
+			while (this.edges.size() > 1 && i < this.edges.size()) {
+				if (this.edges.get(i).getStart() == u) {
+					if (!take_nodes_from_L) {
+						this.IS.add(this.R.get(this.edges.get(i).getEnd()));
+					}
+					this.edges.remove(i);
+				} else if (this.edges.get(i).getEnd() == v) {
+					if (take_nodes_from_L) {
+						this.IS.add(this.L.get(this.edges.get(i).getStart()));
+					}
+					this.edges.remove(i);
+				} else {
+					i++;
+				}
+			}
 			this.edges.remove(0);
 			if (this.TEST) {
 				System.out.println("TEST: removed edge " + e);
 			}
 		}
 
+		for (int k = 0; k < this.IS.size(); k++) {
+			for (int l = k + 1; l < this.IS.size();) {
+				if (this.IS.get(k).equals(this.IS.get(l))) {
+					this.IS.remove(l);
+				} else {
+					l++;
+				}
+			}
+		}
 		return this.IS;
 	}
 

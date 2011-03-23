@@ -64,16 +64,23 @@ public class Board {
 				if (!invalid) {
 					if (black) {
 						// init black fields
+						if (this.TEST) {
+							System.out.println("TEST: adding black -> " + temp);
+						}
 						this.black_fields.add(temp);
-						black = false;
 					} else {
 						// init white fields
 						this.white_fields.add(temp);
-						black = true;
 					}
 				} else {
 					invalid = false;
 				}
+
+				black = !black;
+			}
+
+			if (this.size.getY() % 2 == 0) {
+				black = !black;
 			}
 		}
 	}
