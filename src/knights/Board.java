@@ -23,22 +23,10 @@ public class Board {
 		initGraph();
 		List<Position> IS = this.bipartite_graph.findIS();
 
-		if (this.TEST) {
-			for (int i = 0; i < IS.size(); i++) {
-				System.out.println("IS -> " + IS.get(i));
-			}
+		System.out.println(IS.size());
+		for (int i = 0; i < IS.size(); i++) {
+			System.out.println(IS.get(i));
 		}
-	}
-
-	public void findMaxMatching() {
-		initGraph();
-		if (this.TEST) {
-			System.out.println("TEST: Board.findMaxMatching: Completed");
-			System.out
-					.println("TEST: Board.findMaxMatching: Start relabel_to_front");
-		}
-
-		// int maxflow = this.bipartite_graph.relabel_to_front();
 	}
 
 	private void initAvailableFields() {
@@ -92,11 +80,6 @@ public class Board {
 		} else {
 			this.bipartite_graph = new Graph(this.white_fields,
 					this.black_fields, this.TEST);
-		}
-
-		if (this.TEST) {
-			System.out.println("TEST: Board.initGraph: dispConnections: "
-					+ this.bipartite_graph.dispConnections());
 		}
 	}
 
